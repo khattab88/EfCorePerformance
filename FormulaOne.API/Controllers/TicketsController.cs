@@ -39,11 +39,14 @@ namespace FormulaOne.API.Controllers
                 return NotFound();
             }
 
-            foreach (var ticket in mainEvent.Tickets)
-            {
-                ticket.Price *= amount;
-                ticket.UpdatedAt = DateTime.UtcNow;
-            }
+            //foreach (var ticket in mainEvent.Tickets)
+            //{
+            //    ticket.Price *= amount;
+            //    ticket.UpdatedAt = DateTime.UtcNow;
+            //}
+
+            await _db.Database.ExecuteSqlInterpolatedAsync(
+                $"UPDATE Tickets SET Price = Price * {amount}, UpdatedAt = {DateTime.UtcNow} WHERE EventId = {eventId};");
 
             mainEvent.Location = mainEvent.Location + " - updated at " + DateTime.UtcNow.Millisecond;
 
