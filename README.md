@@ -1,6 +1,6 @@
 # EfCorePerformance
 
-Optimising EF Core performance with .NET Web API.
+Optimizing EF Core performance with .NET Web API.
 
 
 ## Steps:
