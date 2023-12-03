@@ -45,12 +45,17 @@ namespace FormulaOne.API.Controllers
             //    ticket.UpdatedAt = DateTime.UtcNow;
             //}
 
+
+            await _db.Database.BeginTransactionAsync();
+
             await _db.Database.ExecuteSqlInterpolatedAsync(
                 $"UPDATE Tickets SET Price = Price * {amount}, UpdatedAt = {DateTime.UtcNow} WHERE EventId = {eventId};");
 
             mainEvent.Location = mainEvent.Location + " - updated at " + DateTime.UtcNow.Millisecond;
 
             await _db.SaveChangesAsync();
+
+            await _db.Database.CommitTransactionAsync();
 
             return NoContent();
         }
