@@ -1,4 +1,5 @@
 
+using FormulaOne.API.Config;
 using FormulaOne.Data;
 using FormulaOne.Data.Repositories;
 using FormulaOne.Data.Repositories.Interfaces;
@@ -15,9 +16,19 @@ namespace FormulaOne.API
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
+            var dbContextConfig = new DbContextConfig();
+            builder.Configuration.GetSection("DbContextConfig").Bind(dbContextConfig);
+
+            builder.Services.AddDbContext<AppDbContext>(builder =>
             {
-                options.UseSqlServer(connectionString);
+                builder.UseSqlServer(connectionString, options =>
+                {
+                    options.CommandTimeout(dbContextConfig.CommandTimeout);
+                });
+
+                // enabled only on dev environment
+                builder.EnableDetailedErrors(dbContextConfig.EnableDetailedErrors);
+                builder.EnableSensitiveDataLogging(dbContextConfig.EnableSensitiveDataLogging);
             });
 
 
